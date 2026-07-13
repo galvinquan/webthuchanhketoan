@@ -243,7 +243,7 @@ def balance_sheet(
 
 
 
-
+# ── 5. Sổ cái ──────────────────────────────────────────────────────────
 
 
 @router.get("/general-ledger/{account_number}")
