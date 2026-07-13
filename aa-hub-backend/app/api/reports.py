@@ -240,3 +240,82 @@ def balance_sheet(
         },
         "can_doi": abs(tong_tai_san - tong_nguon_von) < 1,
     }
+
+
+
+
+
+
+@router.get("/general-ledger/{account_number}")
+def general_ledger(
+    account_number: str,
+    from_date: Optional[date] = None,
+    to_date: Optional[date] = None,
+    company_id: int = Depends(get_company_id),
+    db: Session = Depends(get_db),
+):
+    opening = db.query(OpeningBalance).filter(
+        OpeningBalance.company_id == company_id,
+        OpeningBalance.account_number == account_number
+    ).first()
+
+    opening_balance = 0
+    if opening:
+        opening_balance = float(opening.debit) - float(opening.credit)
+
+    entries = db.query(LedgerEntry).filter(
+        LedgerEntry.company_id == company_id
+    )
+
+    entries = entries.filter(
+        (LedgerEntry.debit_acct == account_number) |
+        (LedgerEntry.credit_acct == account_number)
+    )
+
+    if from_date:
+        entries = entries.filter(
+            LedgerEntry.posting_date >= from_date
+        )
+
+    if to_date:
+        entries = entries.filter(
+            LedgerEntry.posting_date <= to_date
+        )
+
+    entries = entries.order_by(
+        LedgerEntry.posting_date,
+        LedgerEntry.id
+    ).all()
+
+    balance = opening_balance
+    transactions = []
+
+    for e in entries:
+        voucher = db.get(Voucher, e.voucher_id)
+
+        debit = 0
+        credit = 0
+
+        if e.debit_acct == account_number:
+            debit = float(e.amount)
+            balance += debit
+
+        if e.credit_acct == account_number:
+            credit = float(e.amount)
+            balance -= credit
+
+        transactions.append({
+            "posting_date": e.posting_date,
+            "voucher_no": voucher.voucher_no if voucher else "",
+            "narration": e.narration,
+            "debit": debit,
+            "credit": credit,
+            "running_balance": balance,
+        })
+
+    return {
+        "account_number": account_number,
+        "opening_balance": opening_balance,
+        "transactions": transactions,
+        "closing_balance": balance,
+    }
