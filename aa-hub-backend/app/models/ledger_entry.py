@@ -62,17 +62,17 @@ class LedgerEntry(Base):
     voucher = relationship(
     "Voucher",
     back_populates="ledger_entries"
-)
+    )
 
     company = relationship(
     "Company",
     back_populates="ledger_entries"
-)
+    )
 
     partner = relationship(
     "Partner",
     back_populates="ledger_entries"
-)
+    )
 
     debit_account = relationship(
         "Account",

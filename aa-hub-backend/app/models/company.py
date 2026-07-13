@@ -50,19 +50,19 @@ class Company(Base):
     partners = relationship(
     "Partner",
     back_populates="company"
-)
+    )
 
-vouchers = relationship(
-    "Voucher",
-    back_populates="company"
-)
+    vouchers = relationship(
+        "Voucher",
+        back_populates="company"
+    )
 
-opening_balances = relationship(
-    "OpeningBalance",
-    back_populates="company"
-)
+    opening_balances = relationship(
+        "OpeningBalance",
+        back_populates="company"
+    )
 
-ledger_entries = relationship(
-    "LedgerEntry",
-    back_populates="company"
-)
+    ledger_entries = relationship(
+        "LedgerEntry",
+        back_populates="company"
+    )

@@ -40,14 +40,14 @@ class Partner(Base):
     vouchers = relationship(
     "Voucher",
     back_populates="partner"
-)
+    )
 
-opening_balances = relationship(
-    "OpeningBalance",
-    back_populates="partner"
-)
+    opening_balances = relationship(
+        "OpeningBalance",
+        back_populates="partner"
+    )
 
-ledger_entries = relationship(
-    "LedgerEntry",
-    back_populates="partner"
-)
+    ledger_entries = relationship(
+        "LedgerEntry",
+        back_populates="partner"
+    )
