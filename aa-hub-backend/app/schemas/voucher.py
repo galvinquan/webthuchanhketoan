@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, ConfigDict
 from datetime import date
 from decimal import Decimal
 from typing import Optional, Literal
@@ -50,6 +50,7 @@ class VoucherUpdate(BaseModel):
 
 
 class LedgerEntryOut(BaseModel):
+    
     id: int
     voucher_id: int
     company_id: int
@@ -59,9 +60,8 @@ class LedgerEntryOut(BaseModel):
     credit_acct: str
     amount: Decimal
     partner_id: Optional[int] = None
+    model_config=ConfigDict(from_attributes=True)
 
-    class Config:
-        from_attributes = True
 
 
 class VoucherOut(BaseModel):
@@ -78,8 +78,7 @@ class VoucherOut(BaseModel):
     attached_docs: int
     total_amount: Decimal
 
-    class Config:
-        from_attributes = True
+    model_config=ConfigDict(from_attributes=True)
 
 
 class VoucherDetailOut(VoucherOut):

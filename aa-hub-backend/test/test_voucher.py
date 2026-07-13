@@ -11,6 +11,15 @@ from decimal import Decimal
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import sys
+import os
+
+# Tìm đường dẫn đến thư mục chứa file test_voucher.py (webthuchanhketoan)
+root_dir = os.path.dirname(os.path.abspath(__file__))
+if root_dir not in sys.path:
+    sys.path.insert(0, root_dir)
+
+
 from app.db.database import Base
 from app.models.company import Company
 from app.models.user import User
