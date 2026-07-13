@@ -3,9 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.db.database import Base, engine, SessionLocal
 from app.models import *
 from app.api.auth import router as auth_router
+from app.api.company import router as company_router
+from app.api.partners import router as partners_router
 
 app = FastAPI(title="AA-hub Backend")
 app.include_router(auth_router)
+app.include_router(company_router)
+app.include_router(partners_router)
 
 app.add_middleware(
     CORSMiddleware,
