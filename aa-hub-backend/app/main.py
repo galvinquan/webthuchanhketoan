@@ -8,6 +8,8 @@ from app.api.partners import router as partners_router
 from app.api.accounts import router as accounts_router
 from app.api.reports import router as reports_router
 from app.api.vouchers import router as vouchers_router
+from app.utils.seed_account import seed_accounts
+
 
 app = FastAPI(title="AA-hub Backend")
 app.include_router(auth_router)
@@ -28,6 +30,7 @@ app.add_middleware(
 @app.on_event("startup")
 def startup():
     Base.metadata.create_all(bind=engine)
+    seed_accounts()
 
 @app.get("/api/health")
 def health():
