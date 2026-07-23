@@ -16,13 +16,17 @@ router = APIRouter(prefix="/api/vouchers", tags=["vouchers"])
 
 # ---------- auth/context dependency (giống pattern trong partners.py) ----------
 
-def get_company_id(request: Request, db: Session = Depends(get_db)) -> int:
+def get_company_id(assignment_id: int, request: Request, db: Session = Depends(get_db)) -> int:
     user_id = request.cookies.get("user_id")
     if not user_id:
         raise HTTPException(401, "Chưa đăng nhập")
-    company = db.query(Company).filter(Company.user_id == int(user_id)).first()
+    company = (
+        db.query(Company)
+        .filter(Company.user_id == int(user_id), Company.assignment_id == assignment_id)
+        .first()
+    )
     if not company:
-        raise HTTPException(404, "Chưa có thông tin doanh nghiệp")
+        raise HTTPException(404, "Chưa có bài làm cho bài tập này")
     return company.id
 
 

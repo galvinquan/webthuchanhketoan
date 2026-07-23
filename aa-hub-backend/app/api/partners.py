@@ -6,14 +6,20 @@ from app.schemas.partner import PartnerCreate, PartnerOut
 
 router = APIRouter(prefix="/api/partners", tags=["partners"])
 
-def get_company_id(request: Request, db: Session = Depends(get_db)):
+
+def get_company_id(assignment_id: int, request: Request, db: Session = Depends(get_db)):
     user_id = request.cookies.get("user_id")
     if not user_id:
         raise HTTPException(401, "Chưa đăng nhập")
-    company = db.query(Company).filter(Company.user_id == int(user_id)).first()
+    company = (
+        db.query(Company)
+        .filter(Company.user_id == int(user_id), Company.assignment_id == assignment_id)
+        .first()
+    )
     if not company:
-        raise HTTPException(404, "Chưa có thông tin doanh nghiệp")
+        raise HTTPException(404, "Chưa có bài làm cho bài tập này")
     return company.id
+
 
 @router.get("", response_model=list[PartnerOut])
 def list_partners(type: str = None, company_id: int = Depends(get_company_id), db: Session = Depends(get_db)):
@@ -22,6 +28,7 @@ def list_partners(type: str = None, company_id: int = Depends(get_company_id), d
         q = q.filter(Partner.type == type)
     return q.all()
 
+
 @router.post("", response_model=PartnerOut)
 def create_partner(payload: PartnerCreate, company_id: int = Depends(get_company_id), db: Session = Depends(get_db)):
     partner = Partner(company_id=company_id, **payload.model_dump())
@@ -29,6 +36,7 @@ def create_partner(payload: PartnerCreate, company_id: int = Depends(get_company
     db.commit()
     db.refresh(partner)
     return partner
+
 
 @router.delete("/{partner_id}")
 def delete_partner(partner_id: int, company_id: int = Depends(get_company_id), db: Session = Depends(get_db)):
